@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qu.Dao.BookDao">
+    <insert id="insertBook" parameterType="com.qu.Dto.BookDto">
+        insert into book (name,description,kc,status)
+        VALUES
+        (#{bookDto.name},#{bookDto.description},${bookDto.kc},1)
+    </insert>
+    <delete id="deleteBook">
+        UPDATE book SET status=2 WHERE id=#{id}
+    </delete>
+
+    <update id="update" parameterType="com.qu.Dto.BookDto">
+           UPDATE book set
+            <trim suffixOverrides=",">
+           <if test="bookDto.name!=null and bookDto.name!=''">name=#{bookDto.name},</if>
+           <if test="bookDto.description!=null and bookDto.description!=''">description=#{bookDto.description},</if>
+           <if test="bookDto.kc!=null">kc=#{bookDto.kc},</if>
+            </trim>
+        WHERE id=#{bookDto.id}
+    </update>
+
+    <select id="getBooks" resultType="com.qu.Entity.Book" parameterType="com.qu.Dto.BookSearchDto">
+        select * from book
+        <where>
+            <if test="booksearchDto.name!=null and booksearchDto.name!=''"> and name like concat('%',#{booksearchDto.name},'%')</if>
+            <if test="booksearchDto.description!=null and booksearchDto.description!=''"> and description like concat('%',#{booksearchDto.description},'%')</if>
+            <if test="booksearchDto.kc!=null and booksearchDto.kc!=''">and kc=#{booksearchDto.kc}</if>
+        </where>
+    </select>
+</mapper>
